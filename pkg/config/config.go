@@ -10,6 +10,8 @@ import (
 )
 
 var (
+	confLog = log.Get().WithField("prifix", "config")
+
 	global   atomic.Value
 	globalMu sync.Mutex
 
@@ -18,8 +20,6 @@ var (
 		"somebody.toml",
 		"/etc/rickshawdriver/somebody.toml",
 	}
-
-	confLog = log.Get().WithField("prifix", "config")
 )
 
 type HttpConf struct {
@@ -30,17 +30,7 @@ type HttpConf struct {
 type Config struct {
 	Http         HttpConf `toml:"http"`
 	OriginalPath string
-	Store        Store
 	LogLevel     string `toml:"log_level"`
-}
-
-type Store struct {
-	StoreType      string `toml:"store_type"`
-	StoreHost      string `toml:"store_host"`
-	StorePort      int    `toml:"store_port"`
-	StoreNameSpace string `toml:"store_namespace"`
-	StoreUser      string `toml:"store_user"`
-	StorePassWord  string `toml:"store_password"`
 }
 
 // load my config file
@@ -59,15 +49,9 @@ func Load(config *Config) error {
 	}
 
 	// if file not exist
-	if config.OriginalPath == "" {
+	if config.OriginalPath == "" && nil != createDefaultFile() {
 		//create default file
 		confLog.Warnf("not found config file, creating")
-
-		if err := createDefaultFile(); err != nil {
-			confLog.Errorf(err.Error())
-			return err
-		}
-		return nil
 	}
 
 	// analyse config file
@@ -79,12 +63,14 @@ func Load(config *Config) error {
 }
 
 func createDefaultFile() error {
+	confLog.Println("create default config file")
 	f, err := os.Create("somebody.toml")
 	defer f.Close()
 	if err != nil {
 		return err
-	} else {
-		_, err = f.Write([]byte(`log_level = "debug"
+	}
+
+	_, err = f.Write([]byte(`log_level = "debug"
 pid_file_location = ""
 [http]
 addr = "127.0.0.1"
@@ -99,7 +85,6 @@ limit_bytes_body = 10485760
 enable_health_checks = true
 health_check_timeout = 5
 `))
-	}
 
 	return nil
 }
