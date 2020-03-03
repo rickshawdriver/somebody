@@ -14,7 +14,7 @@ func String(app string) string {
 }
 
 func NewVersionCmd() *cobra.Command {
-	var versionCmd = &cobra.Command{
+	versionCmd := &cobra.Command{
 		Use:   "version",
 		Short: "Print Version",
 		Long:  "Print Now Gateway Version",
