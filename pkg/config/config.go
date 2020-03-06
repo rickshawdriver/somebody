@@ -14,12 +14,17 @@ var (
 	global   atomic.Value
 	globalMu sync.Mutex
 
-	configPath = []string{
+	defaultConfigPath = []string{
 		"../somebody.toml",
 		"somebody.toml",
 		"/etc/rickshawdriver/somebody.toml",
 	}
 )
+
+type FilePath struct {
+	OriginalPath    string `toml:"original_path"`
+	PidFileLocation string `toml:"pid_file_location"`
+}
 
 type HttpConf struct {
 	Addr string `toml:"addr"`
@@ -27,17 +32,17 @@ type HttpConf struct {
 }
 
 type Config struct {
-	Http         HttpConf `toml:"http"`
-	OriginalPath string
-	LogLevel     string `toml:"log_level"`
+	Http     HttpConf `toml:"http"`
+	Log      log.Log
+	FilePath FilePath `toml:"filepath"`
 }
 
 // load my config file
 func Load(config *Config) error {
-	for _, path := range configPath {
+	for _, path := range defaultConfigPath {
 		_, err := os.Open(path)
 		if err == nil { // success
-			config.OriginalPath = path
+			config.FilePath.OriginalPath = path
 			break
 		}
 		if os.IsNotExist(err) {
@@ -48,13 +53,13 @@ func Load(config *Config) error {
 	}
 
 	// if file not exist
-	if config.OriginalPath == "" && nil != createDefaultFile() {
+	if config.FilePath.OriginalPath == "" && nil != createDefaultFile() {
 		//create default file
 		confLog.Warnf("not found config file, creating")
 	}
 
 	// analyse config file
-	if _, err := toml.DecodeFile(config.OriginalPath, &config); err != nil {
+	if _, err := toml.DecodeFile(config.FilePath.OriginalPath, &config); err != nil {
 		return err
 	}
 

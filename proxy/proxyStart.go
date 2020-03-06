@@ -11,5 +11,21 @@ var (
 )
 
 func ServerStart(cmd *cobra.Command, args []string) {
-	config.Global()
+	if err := initialize(); err != nil {
+		startLogger.Errorf("initialize error for %s", err)
+	}
+
+}
+
+func initialize() error {
+	var conf config.Config
+	if err := config.Load(&conf); err != nil {
+		return err
+	}
+
+	if err := config.WritePidToFile(); err != nil {
+		startLogger.Warnf("write PIDFile err:", err)
+	}
+
+	return nil
 }
