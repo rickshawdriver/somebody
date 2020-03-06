@@ -6,6 +6,10 @@ import (
 	"strings"
 )
 
+type Log struct {
+	LogLevel string `toml:"log_level"`
+}
+
 var (
 	log = logrus.New()
 )

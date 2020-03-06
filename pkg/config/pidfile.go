@@ -27,10 +27,9 @@ func GetPidFile() string {
 
 func WritePidToFile() error {
 	if pidfile == "" {
-		return errors.New("pidfile not set")
+		pidfile = "/var/run/somebody/somebody.pid"
 	}
 
-	// mkdir
 	if err := os.MkdirAll(filepath.Dir(pidfile), os.FileMode(0755)); err != nil {
 		return err
 	}

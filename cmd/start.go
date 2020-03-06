@@ -1,17 +1,18 @@
 package cmd
 
 import (
+	"github.com/rickshawdriver/somebody/proxy"
 	"github.com/spf13/cobra"
 )
 
-// start hordo
-func Start() *cobra.Command {
+// start somebody
+func NewServerStartCmd() *cobra.Command {
 	startCmd := &cobra.Command{
 		Use:   "start",
 		Short: "start proxy",
-		Long:  "startGateway",
+		Long:  "start Gateway",
 		Run: func(cmd *cobra.Command, args []string) {
-			//err := startProxy(cmd, args)
+			proxy.ServerStart(cmd, args)
 		},
 	}
 

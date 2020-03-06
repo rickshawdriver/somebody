@@ -14,7 +14,9 @@ func GetRootCmd(args []string) *cobra.Command {
 		DisableAutoGenTag: true,
 	}
 
+	rootCmd.AddCommand(NewServerStartCmd())
 	rootCmd.AddCommand(NewVersionCmd())
+	rootCmd.AddCommand(NewCheckCmd())
 
 	return rootCmd
 }
