@@ -8,5 +8,5 @@ import (
 type proxyRuntime struct {
 	sync.Mutex
 
-	conf func() config.Config
+	conf config.Config
 }
