@@ -12,3 +12,11 @@ type = "first"
 [filepath]
 original_path = ""
 pid_file_location = ""
+
+[store]
+store_type = "etcd"
+store_host = "127.0.0.1"
+store_port = 2379
+store_namespace = "somebody"
+store_user = ""
+store_password = ""
