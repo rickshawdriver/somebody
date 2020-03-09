@@ -3,6 +3,7 @@ package config
 import (
 	"github.com/BurntSushi/toml"
 	"github.com/rickshawdriver/somebody/pkg/log"
+	"github.com/rickshawdriver/somebody/pkg/meta"
 	"os"
 	"strconv"
 	"sync"
@@ -22,30 +23,11 @@ var (
 	}
 )
 
-type FilePath struct {
-	OriginalPath    string `toml:"original_path"`
-	PidFileLocation string `toml:"pid_file_location"`
-}
-
-type Store struct {
-	StoreType      string `toml:"store_type"`
-	StoreHost      string `toml:"store_host"`
-	StorePort      int    `toml:"store_port"`
-	StoreNameSpace string `toml:"store_namespace"`
-	StoreUser      string `toml:"store_user"`
-	StorePassWord  string `toml:"store_password"`
-}
-
-type HttpConf struct {
-	Addr string `toml:"addr"`
-	Port int    `toml:"port"`
-}
-
 type Config struct {
-	Http     HttpConf `toml:"http"`
+	Http     meta.HttpConf `toml:"http"`
 	Log      log.Log
-	FilePath FilePath `toml:"filepath"`
-	Store    Store
+	FilePath meta.FilePath `toml:"filepath"`
+	Store    meta.Store
 }
 
 // load my config file
