@@ -97,6 +97,6 @@ func Global() Config {
 }
 
 // etcd://127.0.0.1:2379
-func GetStoreConf(s Store) (string, string, string, string) {
+func GetStoreConf(s meta.Store) (string, string, string, string) {
 	return s.StoreType + "://" + s.StoreHost + ":" + strconv.Itoa(s.StorePort), s.StoreNameSpace, s.StoreUser, s.StorePassWord
 }
