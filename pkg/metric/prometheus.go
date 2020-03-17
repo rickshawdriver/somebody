@@ -37,14 +37,14 @@ var (
 		[]string{"apiname"},
 	)
 
-	qpsTarget = prometheus.NewGaugeVec(prometheus.GaugeOpts{
-		Namespace: "somebody",
-		Help:      "moment",
-	}, []string{"key", "value"})
+	//qpsTarget = prometheus.NewGaugeVec(prometheus.GaugeOpts{
+	//	Namespace: "somebody",
+	//	Help:      "moment",
+	//}, []string{"key", "value"})
 )
 
 func init() {
-	prometheus.MustRegister(requestContainer, requestCost, qpsTarget)
+	prometheus.MustRegister(requestContainer, requestCost)
 }
 
 func NewPrometheusMetric(addr, namespace, instance string, interval time.Duration) (Metric, error) {
@@ -69,7 +69,7 @@ func (p *Prometheus) Request(api, code string, startTime time.Time) {
 }
 
 func (p *Prometheus) Statistics(qps int) {
-	qpsTarget.WithLabelValues("qps", "count").Set(float64(qps))
+	//qpsTarget.WithLabelValues("qps", "count").Set(float64(qps))
 }
 
 func (p *Prometheus) Report() error {
@@ -96,6 +96,7 @@ func (p *Prometheus) Report() error {
 	if err != nil {
 		return err
 	}
+
 	defer resp.Body.Close()
 	return nil
 }

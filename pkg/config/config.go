@@ -7,6 +7,7 @@ import (
 	"strconv"
 	"sync"
 	"sync/atomic"
+	"time"
 )
 
 var (
@@ -36,6 +37,14 @@ type Store struct {
 	StorePassWord  string `toml:"store_password"`
 }
 
+type Metric struct {
+	Type      string        `toml:"type"`
+	Addr      string        `toml:"addr"`
+	Namespace string        `toml:"namespace"`
+	Instance  string        `toml:"instance"`
+	Interval  time.Duration `toml:"interval"`
+}
+
 type HttpConf struct {
 	Addr string `toml:"addr"`
 	Port int    `toml:"port"`
@@ -46,6 +55,7 @@ type Config struct {
 	Log      log.Log
 	FilePath FilePath `toml:"filepath"`
 	Store    Store
+	Metric   Metric `toml:"metric"`
 }
 
 // load my config file

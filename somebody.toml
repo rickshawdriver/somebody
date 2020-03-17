@@ -22,6 +22,7 @@ store_user = ""
 store_password = ""
 
 [metric]
+type = "prometheus"
 addr = "127.0.0.1:9091"
 namespace = "somebody"
 instance = "somebody"
