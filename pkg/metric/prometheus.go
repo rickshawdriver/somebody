@@ -37,14 +37,17 @@ var (
 		[]string{"apiname"},
 	)
 
-	//qpsTarget = prometheus.NewGaugeVec(prometheus.GaugeOpts{
-	//	Namespace: "somebody",
-	//	Help:      "moment",
-	//}, []string{"key", "value"})
+	qpsTarget = prometheus.NewGaugeVec(
+		prometheus.GaugeOpts{
+			Name: "somebody",
+			Help: "moment",
+		},
+		[]string{"server"},
+	)
 )
 
 func init() {
-	prometheus.MustRegister(requestContainer, requestCost)
+	prometheus.MustRegister(requestContainer, requestCost, qpsTarget)
 }
 
 func NewPrometheusMetric(addr, namespace, instance string, interval time.Duration) (Metric, error) {
@@ -69,7 +72,7 @@ func (p *Prometheus) Request(api, code string, startTime time.Time) {
 }
 
 func (p *Prometheus) Statistics(qps int) {
-	//qpsTarget.WithLabelValues("qps", "count").Set(float64(qps))
+	qpsTarget.WithLabelValues("qps").Set(float64(qps))
 }
 
 func (p *Prometheus) Report() error {
@@ -103,13 +106,14 @@ func (p *Prometheus) Report() error {
 
 func (p *Prometheus) Run() {
 	go func() {
-		t := time.NewTicker(p.interval)
+		t := time.NewTicker(p.interval * time.Second)
 		defer t.Stop()
 
 		for {
 			select {
 			case <-t.C:
 				err := p.Report()
+				// todo wait fix push url error
 				if err != nil {
 					log.Errorf("metric: could not push metrics to prometheus pushgateway: errors:\n%+v", err)
 				}
