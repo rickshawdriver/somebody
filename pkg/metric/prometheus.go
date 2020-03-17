@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"github.com/prometheus/client_golang/prometheus"
 	"github.com/prometheus/common/expfmt"
+	"github.com/prometheus/common/log"
 	"net/http"
 	"time"
 )
@@ -15,6 +16,7 @@ const (
 type Prometheus struct {
 	job, instance, addr string
 	requestClient       *http.Client
+	interval            time.Duration
 }
 
 var (
@@ -42,10 +44,10 @@ var (
 )
 
 func init() {
-	prometheus.MustRegister(requestContainer, requestCost)
+	prometheus.MustRegister(requestContainer, requestCost, qpsTarget)
 }
 
-func NewPrometheusMetric(addr, namespace, instance string) (Metric, error) {
+func NewPrometheusMetric(addr, namespace, instance string, interval time.Duration) (Metric, error) {
 	client := http.DefaultClient
 	client.Timeout = time.Second * 3
 
@@ -54,6 +56,7 @@ func NewPrometheusMetric(addr, namespace, instance string) (Metric, error) {
 		job:           namespace,
 		instance:      instance,
 		addr:          addr,
+		interval:      interval,
 	}
 
 	return p, nil
@@ -95,4 +98,21 @@ func (p *Prometheus) Report() error {
 	}
 	defer resp.Body.Close()
 	return nil
+}
+
+func (p *Prometheus) Run() {
+	go func() {
+		t := time.NewTicker(p.interval)
+		defer t.Stop()
+
+		for {
+			select {
+			case <-t.C:
+				err := p.Report()
+				if err != nil {
+					log.Errorf("metric: could not push metrics to prometheus pushgateway: errors:\n%+v", err)
+				}
+			}
+		}
+	}()
 }

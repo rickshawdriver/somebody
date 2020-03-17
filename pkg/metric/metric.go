@@ -10,6 +10,7 @@ type Metric interface {
 	Request(string, string, time.Time)
 	Report() error
 	Statistics(int)
+	Run()
 }
 
 func init() {

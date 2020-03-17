@@ -20,3 +20,9 @@ store_port = 2379
 store_namespace = "somebody"
 store_user = ""
 store_password = ""
+
+[metric]
+addr = "127.0.0.1:9091"
+namespace = "somebody"
+instance = "somebody"
+interval = 5
