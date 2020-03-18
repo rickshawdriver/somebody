@@ -2,9 +2,10 @@ package metric
 
 import (
 	"bytes"
+	"fmt"
 	"github.com/prometheus/client_golang/prometheus"
 	"github.com/prometheus/common/expfmt"
-	"github.com/prometheus/common/log"
+	"github.com/rickshawdriver/somebody/pkg/log"
 	"net/http"
 	"time"
 )
@@ -23,7 +24,7 @@ var (
 	requestContainer = prometheus.NewCounter(prometheus.CounterOpts{
 		Namespace: "somebody",
 		Subsystem: "somebody",
-		Name:      "somebody_request",
+		Name:      "request",
 		Help:      "gateway somebody api",
 	})
 
@@ -31,7 +32,7 @@ var (
 		prometheus.HistogramOpts{
 			Namespace: "somebody",
 			Subsystem: "somebody",
-			Name:      "somebody_duration_seconds",
+			Name:      "duration_seconds",
 			Help:      "the cost of somebody",
 		},
 		[]string{"apiname"},
@@ -39,11 +40,15 @@ var (
 
 	qpsTarget = prometheus.NewGaugeVec(
 		prometheus.GaugeOpts{
-			Name: "somebody",
-			Help: "moment",
+			Namespace: "somebody",
+			Subsystem: "somebody",
+			Name:      "qps_moment",
+			Help:      "somebody qps",
 		},
 		[]string{"server"},
 	)
+
+	metricLog = log.Get().WithField("prefix", "metric")
 )
 
 func init() {
@@ -90,12 +95,14 @@ func (p *Prometheus) Report() error {
 		}
 	}
 
-	req, err := http.NewRequest(METHOD, p.addr, buf)
+	pushUrl := fmt.Sprintf("http://%s/metrics/job/%s", p.addr, p.job)
+	req, err := http.NewRequest(METHOD, pushUrl, buf)
 	if err != nil {
 		return err
 	}
 	req.Header.Set("Content-Type", string(expfmt.FmtProtoDelim))
 	resp, err := p.requestClient.Do(req)
+	metricLog.Infoln(resp.StatusCode)
 	if err != nil {
 		return err
 	}
@@ -115,7 +122,7 @@ func (p *Prometheus) Run() {
 				err := p.Report()
 				// todo wait fix push url error
 				if err != nil {
-					log.Errorf("metric: could not push metrics to prometheus pushgateway: errors:\n%+v", err)
+					metricLog.Errorf("metric: could not push metrics to prometheus pushgateway: errors:\n%+v", err)
 				}
 			}
 		}
