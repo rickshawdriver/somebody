@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"github.com/rickshawdriver/somebody/pkg/config"
 	"github.com/rickshawdriver/somebody/pkg/log"
+	"github.com/rickshawdriver/somebody/pkg/metric"
 	"github.com/rickshawdriver/somebody/store"
 	"github.com/spf13/cobra"
 	"os"
@@ -38,6 +39,13 @@ func initialize() error {
 	if err != nil {
 		startLogger.Errorf("err is:%s", err)
 	}
+
+	p, err := metric.NewMetricInstance(conf.Metric.Type, conf.Metric.Addr, conf.Metric.Namespace,
+		conf.Metric.Instance, conf.Metric.Interval)
+	if err != nil {
+		startLogger.Errorln(err)
+	}
+	p.Run()
 
 	return nil
 }

@@ -3,11 +3,11 @@ package config
 import (
 	"github.com/BurntSushi/toml"
 	"github.com/rickshawdriver/somebody/pkg/log"
-	"github.com/rickshawdriver/somebody/pkg/meta"
 	"os"
 	"strconv"
 	"sync"
 	"sync/atomic"
+	"time"
 )
 
 var (
@@ -23,11 +23,39 @@ var (
 	}
 )
 
+type FilePath struct {
+	OriginalPath    string `toml:"original_path"`
+	PidFileLocation string `toml:"pid_file_location"`
+}
+
+type Store struct {
+	StoreType      string `toml:"store_type"`
+	StoreHost      string `toml:"store_host"`
+	StorePort      int    `toml:"store_port"`
+	StoreNameSpace string `toml:"store_namespace"`
+	StoreUser      string `toml:"store_user"`
+	StorePassWord  string `toml:"store_password"`
+}
+
+type Metric struct {
+	Type      string        `toml:"type"`
+	Addr      string        `toml:"addr"`
+	Namespace string        `toml:"namespace"`
+	Instance  string        `toml:"instance"`
+	Interval  time.Duration `toml:"interval"`
+}
+
+type HttpConf struct {
+	Addr string `toml:"addr"`
+	Port int    `toml:"port"`
+}
+
 type Config struct {
-	Http     meta.HttpConf `toml:"http"`
+	Http     HttpConf `toml:"http"`
 	Log      log.Log
-	FilePath meta.FilePath `toml:"filepath"`
-	Store    meta.Store
+	FilePath FilePath `toml:"filepath"`
+	Store    Store
+	Metric   Metric `toml:"metric"`
 }
 
 // load my config file
@@ -97,6 +125,6 @@ func Global() Config {
 }
 
 // etcd://127.0.0.1:2379
-func GetStoreConf(s meta.Store) (string, string, string, string) {
+func GetStoreConf(s Store) (string, string, string, string) {
 	return s.StoreType + "://" + s.StoreHost + ":" + strconv.Itoa(s.StorePort), s.StoreNameSpace, s.StoreUser, s.StorePassWord
 }
