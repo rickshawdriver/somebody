@@ -11,10 +11,11 @@ type Log struct {
 }
 
 var (
-	log = logrus.New()
+	log *logrus.Logger
 )
 
-func init() {
+func Init() {
+	log = logrus.New()
 	formatter := new(prefixed.TextFormatter)
 	formatter.FullTimestamp = true
 
@@ -22,6 +23,10 @@ func init() {
 }
 
 func Get() *logrus.Logger {
+	if log != nil {
+		return log
+	}
+	Init()
 	return log
 }
 

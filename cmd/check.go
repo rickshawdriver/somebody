@@ -30,6 +30,6 @@ func NewCheckCmd() *cobra.Command {
 
 func check() error {
 	conf := &config.Config{}
-	err := config.Load(conf)
+	err := config.GetConf(conf)
 	return err
 }

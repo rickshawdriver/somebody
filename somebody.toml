@@ -6,12 +6,12 @@ addr = "127.0.0.1"
 port = 8080
 
 [dnscache]
-enable = true
-type = "first"
+enable = false
+type = "first" #first random noCache
 
 [filepath]
 original_path = ""
-pid_file_location = ""
+pid_file_location = "" #pid file path
 
 [store]
 store_type = "etcd"

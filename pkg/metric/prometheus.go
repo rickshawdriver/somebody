@@ -95,7 +95,7 @@ func (p *Prometheus) Report() error {
 		}
 	}
 
-	pushUrl := fmt.Sprintf("http://%s/metrics/job/%s", p.addr, p.job)
+	pushUrl := fmt.Sprintf("service://%s/metrics/job/%s", p.addr, p.job)
 	req, err := http.NewRequest(METHOD, pushUrl, buf)
 	if err != nil {
 		return err
