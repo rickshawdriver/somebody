@@ -1,7 +1,7 @@
 package cmd
 
 import (
-	"github.com/rickshawdriver/somebody/proxy"
+	"github.com/rickshawdriver/somebody/driver/proxy"
 	"github.com/spf13/cobra"
 )
 
@@ -12,7 +12,7 @@ func NewServerStartCmd() *cobra.Command {
 		Short: "start proxy",
 		Long:  "start Gateway",
 		Run: func(cmd *cobra.Command, args []string) {
-			proxy.ServerStart(cmd, args)
+			proxy.Start(cmd, args)
 		},
 	}
 

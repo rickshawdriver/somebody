@@ -51,7 +51,7 @@ type HttpConf struct {
 }
 
 type Config struct {
-	Http     HttpConf `toml:"http"`
+	Http     HttpConf `toml:"service"`
 	Log      log.Log
 	FilePath FilePath `toml:"filepath"`
 	Store    Store
@@ -97,7 +97,7 @@ func createDefaultFile() error {
 
 	_, err = f.Write([]byte(`log_level = "debug"
 pid_file_location = ""
-[http]
+[service]
 addr = "127.0.0.1"
 port = 8080
 https_port = 443
@@ -114,7 +114,7 @@ health_check_timeout = 5
 	return nil
 }
 
-func SetGlobal(conf Config) {
+func SetGlobal(conf *Config) {
 	globalMu.Lock()
 	defer globalMu.Unlock()
 	global.Store(conf)
@@ -127,4 +127,13 @@ func Global() Config {
 // etcd://127.0.0.1:2379
 func GetStoreConf(s Store) (string, string, string, string) {
 	return s.StoreType + "://" + s.StoreHost + ":" + strconv.Itoa(s.StorePort), s.StoreNameSpace, s.StoreUser, s.StorePassWord
+}
+
+func GetConf(conf *Config) error {
+	if err := Load(conf); err != nil {
+		return err
+	}
+	SetGlobal(conf)
+	log.SetLogLevel(conf.Log.LogLevel)
+	return nil
 }

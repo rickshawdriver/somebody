@@ -17,6 +17,7 @@ func GetRootCmd(args []string) *cobra.Command {
 	rootCmd.AddCommand(NewServerStartCmd())
 	rootCmd.AddCommand(NewVersionCmd())
 	rootCmd.AddCommand(NewCheckCmd())
+	rootCmd.AddCommand(NewApiServerStartCmd())
 
 	return rootCmd
 }
