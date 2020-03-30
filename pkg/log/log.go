@@ -2,43 +2,63 @@ package log
 
 import (
 	"github.com/sirupsen/logrus"
-	prefixed "github.com/x-cray/logrus-prefixed-formatter"
+	stdlog "log"
+	"os"
+	"path/filepath"
 	"strings"
 )
 
-type Log struct {
-	LogLevel string `toml:"log_level"`
+type Logger struct {
+	LogLevel  string `toml:"log_level"`
+	LogPath   string `toml:"log_path"`
+	LogFormat string `toml:"log_format"`
 }
 
 var (
-	log *logrus.Logger
+	mainLogger *logrus.Logger
 )
 
-func Init() {
-	log = logrus.New()
-	formatter := new(prefixed.TextFormatter)
-	formatter.FullTimestamp = true
-
-	log.Formatter = formatter
+func init() {
+	mainLogger = logrus.New()
+	logrus.SetOutput(os.Stdout)
 }
 
-func Get() *logrus.Logger {
-	if log != nil {
-		return log
+func Initialize(logger *Logger) {
+	stdlog.SetFlags(stdlog.Lshortfile | stdlog.LstdFlags)
+
+	var levelStr string = "debug"
+	if logger.LogLevel != "" {
+		levelStr = strings.ToLower(logger.LogLevel)
 	}
-	Init()
-	return log
+
+	level, err := logrus.ParseLevel(levelStr)
+	if err != nil {
+		mainLogger.Errorf("error set level: %v", err)
+	}
+	mainLogger.SetLevel(level)
+
+	if logger.LogPath != "" && err != SetOutPut(logger.LogPath) {
+		mainLogger.Errorf("set log path error: %s", err)
+	}
+
+	mainLogger.SetFormatter(&logrus.TextFormatter{DisableColors: false, FullTimestamp: true, DisableSorting: true})
+	if strings.ToLower(logger.LogFormat) == "json" {
+		mainLogger.SetFormatter(&logrus.JSONFormatter{})
+	}
 }
 
-func SetLogLevel(level string) {
-	switch strings.ToLower(level) {
-	case "error":
-		log.Level = logrus.ErrorLevel
-	case "warn":
-		log.Level = logrus.WarnLevel
-	case "debug":
-		log.Level = logrus.DebugLevel
-	default:
-		log.Level = logrus.InfoLevel
+func SetOutPut(path string) error {
+	dir := filepath.Dir(path)
+
+	if err := os.MkdirAll(dir, 0755); err != nil {
+		mainLogger.Errorf("create log path err : %s", err)
 	}
+
+	logFile, err := os.OpenFile(path, os.O_RDWR|os.O_CREATE|os.O_APPEND, 0666)
+	if err != nil {
+		return err
+	}
+
+	mainLogger.SetOutput(logFile)
+	return nil
 }
