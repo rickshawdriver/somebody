@@ -1,6 +1,6 @@
 [log]
-log_format = "" #json
 log_level  = "debug" #log level
+log_format = "" #json
 log_path   = "" #log/somebody.log
 
 [filepath]

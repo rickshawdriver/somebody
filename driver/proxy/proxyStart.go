@@ -19,7 +19,7 @@ func Start(cmd *cobra.Command, args []string) {
 
 func configure(conf *config.Config) {
 	if err := config.Load(conf); err != nil {
-		log.Errorf("load config error: %s")
+		log.Errorf("load config error: %s", err)
 	}
 	// log init
 	log.Initialize(&conf.Log)
