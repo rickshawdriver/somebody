@@ -41,7 +41,7 @@ func getClusterAddr(addr string) []string {
 	values := strings.Split(addr, ",")
 
 	for _, value := range values {
-		addrs = append(addrs, fmt.Sprintf("service://%s", value))
+		addrs = append(addrs, fmt.Sprintf("http://%s", value))
 	}
 
 	return addrs

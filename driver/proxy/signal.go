@@ -1,4 +1,4 @@
-package system
+package proxy
 
 import (
 	"fmt"
@@ -7,7 +7,7 @@ import (
 	"syscall"
 )
 
-func SetupSignal() {
+func (p *proxyRuntime) SetupSignal() {
 	ch := make(chan os.Signal, 1)
 	signal.Notify(ch, syscall.SIGUSR2, syscall.SIGINT, syscall.SIGTERM)
 	sig := <-ch

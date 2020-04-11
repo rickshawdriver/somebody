@@ -6,3 +6,16 @@ log_path   = "" #log/somebody.log
 [filepath]
 original_path = ""
 pid_file_location = ""
+
+[dnsCache]
+strategy = "first"
+expiration = 10
+checkInterval = 5
+
+[store]
+registryAddr = "etcd://127.0.0.1:2379"
+nameSpace    = "hordo"
+userName     = ""
+password     = ""
+
+routerDegree = 3

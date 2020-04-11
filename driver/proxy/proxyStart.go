@@ -8,21 +8,22 @@ import (
 )
 
 var (
-	conf config.Config
+	conf = &config.Config{}
 )
 
 func Start(cmd *cobra.Command, args []string) {
-	// init conf
-	configure(&conf)
+	configure(conf)
 	http.DefaultTransport.(*http.Transport).Proxy = http.ProxyFromEnvironment
+
+	p := NewProxy(conf)
+	p.SetupSignal()
 }
 
 func configure(conf *config.Config) {
 	if err := config.Load(conf); err != nil {
 		log.Errorf("load config error: %s", err)
 	}
-	// log init
 	log.Initialize(&conf.Log)
 
-	log.Infof("starting")
+	log.Debugf("conf init success")
 }
