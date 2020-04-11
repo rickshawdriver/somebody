@@ -47,8 +47,6 @@ var (
 		},
 		[]string{"server"},
 	)
-
-	metricLog = log.Get().WithField("prefix", "metric")
 )
 
 func init() {
@@ -102,7 +100,7 @@ func (p *Prometheus) Report() error {
 	}
 	req.Header.Set("Content-Type", string(expfmt.FmtProtoDelim))
 	resp, err := p.requestClient.Do(req)
-	metricLog.Infoln(resp.StatusCode)
+	log.Info(resp.StatusCode)
 	if err != nil {
 		return err
 	}
@@ -122,7 +120,7 @@ func (p *Prometheus) Run() {
 				err := p.Report()
 				// todo wait fix push url error
 				if err != nil {
-					metricLog.Errorf("metric: could not push metrics to prometheus pushgateway: errors:\n%+v", err)
+					log.Errorf("metric: could not push metrics to prometheus pushgateway: errors:\n%+v", err)
 				}
 			}
 		}

@@ -6,10 +6,6 @@ import (
 	"github.com/spf13/cobra"
 )
 
-var (
-	logger = log.Get()
-)
-
 // start somebody
 func NewCheckCmd() *cobra.Command {
 	checkCmd := &cobra.Command{
@@ -19,9 +15,9 @@ func NewCheckCmd() *cobra.Command {
 		Run: func(cmd *cobra.Command, args []string) {
 			err := check()
 			if err != nil {
-				logger.Errorf("configuration file not valid, err: %s", err)
+				log.Errorf("configuration file not valid, err: %s", err)
 			}
-			logger.Infoln("configuration file is valid")
+			log.Info("configuration file is valid")
 		},
 	}
 
@@ -30,6 +26,6 @@ func NewCheckCmd() *cobra.Command {
 
 func check() error {
 	conf := &config.Config{}
-	err := config.GetConf(conf)
+	err := config.Load(conf)
 	return err
 }

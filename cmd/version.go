@@ -19,7 +19,7 @@ func NewVersionCmd() *cobra.Command {
 		Short: "Print Version",
 		Long:  "Print Now Gateway Version",
 		Run: func(cmd *cobra.Command, args []string) {
-			log.Get().Infoln(String("somebody"))
+			log.Info(String("somebody"))
 		},
 	}
 
