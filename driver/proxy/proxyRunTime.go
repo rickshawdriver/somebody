@@ -20,14 +20,14 @@ func NewProxy(c *config.Config) *proxyRuntime {
 		router:   router.NewRouterList(c.RouterDegree),
 		dnsCache: system.New(c.DnsCacheConf),
 	}
-	p.initStore()
+	p.initStore(c.Store)
 
 	return p
 }
 
-func (p *proxyRuntime) initStore() {
-	s, err := store.GetStoreFrom("etcd://127.0.0.1:2374", "hordo", "", "")
-	log.Debug(err)
+func (p *proxyRuntime) initStore(sc store.StoreConf) {
+	s, err := store.GetStoreFrom(sc)
+
 	if err != nil {
 		log.Errorf("init store err %s", err)
 	}

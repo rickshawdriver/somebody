@@ -14,6 +14,10 @@ type BasicAuth struct {
 	userName, passWord string
 }
 
+type StoreConf struct {
+	RegistryAddr, NameSpace, UserName, Password string
+}
+
 type Store interface {
 	Ping() error
 }
@@ -22,15 +26,15 @@ func init() {
 	supportSchema["etcd"] = getEtcdStoreFrom
 }
 
-func GetStoreFrom(registryAddr, nameSpace, userName, password string) (Store, error) {
-	u, err := url.Parse(registryAddr)
+func GetStoreFrom(s StoreConf) (Store, error) {
+	u, err := url.Parse(s.RegistryAddr)
 	if err != nil {
 		panic(fmt.Sprintf("parse registry addr failed, errors:%+v", err))
 	}
 	schema := strings.ToLower(u.Scheme)
 	fn, ok := supportSchema[schema]
 	if ok {
-		return fn(getClusterAddr(u.Host), nameSpace, BasicAuth{userName: userName, passWord: password})
+		return fn(getClusterAddr(u.Host), s.NameSpace, BasicAuth{userName: s.UserName, passWord: s.Password})
 	}
 
 	return nil, nil

@@ -4,8 +4,7 @@ go 1.14
 
 require (
 	github.com/BurntSushi/toml v0.3.1
-	github.com/coreos/etcd v3.3.20+incompatible
-	github.com/etcd-io/etcd v3.3.20+incompatible
+	github.com/coreos/etcd v3.3.10+incompatible
 	github.com/google/uuid v1.1.1 // indirect
 	github.com/julienschmidt/httprouter v1.3.0
 	github.com/pmylund/go-cache v2.1.0+incompatible
