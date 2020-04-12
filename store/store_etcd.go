@@ -6,7 +6,7 @@ import (
 )
 
 const (
-	DEFAULTTIMEOUT = 10
+	DEFAULTTIMEOUT = 3
 )
 
 type EtcdStore struct {
@@ -28,6 +28,7 @@ func getEtcdStoreFrom(addr []string, nameSpace string, auth BasicAuth) (Store, e
 	setEtcdAuth(config, auth)
 
 	client, err := clientv3.New(*config)
+
 	if err != nil {
 		return nil, err
 	}
@@ -46,6 +47,6 @@ func setEtcdAuth(config *clientv3.Config, auth BasicAuth) {
 	}
 }
 
-func (etcdStore *EtcdStore) Ping() error {
-	return nil
+func (etcdStore *EtcdStore) Raw() interface{} {
+	return etcdStore.etcdRaw
 }

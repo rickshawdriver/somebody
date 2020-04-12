@@ -22,8 +22,13 @@ type DnsCacheHandle struct {
 	rand             *rand.Rand
 }
 
-func New(strategy Strategy, expiration, checkInterval time.Duration) *DnsCacheHandle {
-	handle := &DnsCacheHandle{cache.New(expiration, checkInterval), strategy, nil}
+type DnsCacheConf struct {
+	Strategy                  Strategy
+	Expiration, CheckInterval time.Duration
+}
+
+func New(dc DnsCacheConf) *DnsCacheHandle {
+	handle := &DnsCacheHandle{cache.New(dc.Expiration, dc.CheckInterval), dc.Strategy, nil}
 	return handle
 }
 

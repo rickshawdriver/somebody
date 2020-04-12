@@ -7,6 +7,8 @@ import (
 // compare func
 type Compare func(a, b []byte) int
 
+type RouterDegree int
+
 type RootItem struct {
 	Root         *Node
 	Compare      Compare

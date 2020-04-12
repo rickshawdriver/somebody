@@ -1,5 +1,9 @@
 package log
 
+import (
+	"runtime/debug"
+)
+
 func Debug(args ...interface{}) {
 	mainLogger.Debug(args...)
 }
@@ -42,4 +46,9 @@ func Fatal(args ...interface{}) {
 
 func Fatalf(format string, args ...interface{}) {
 	mainLogger.Fatalf(format, args...)
+}
+
+func LogPanicHandler(err interface{}) {
+	Errorf("Error in Go routine: %s", err)
+	Errorf("Stack: %s", debug.Stack())
 }

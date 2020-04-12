@@ -3,6 +3,9 @@ package config
 import (
 	"github.com/BurntSushi/toml"
 	"github.com/rickshawdriver/somebody/pkg/log"
+	"github.com/rickshawdriver/somebody/pkg/service"
+	"github.com/rickshawdriver/somebody/pkg/system"
+	"github.com/rickshawdriver/somebody/store"
 	"os"
 )
 
@@ -20,8 +23,12 @@ type FilePath struct {
 }
 
 type Config struct {
-	FilePath FilePath   `toml:"filepath"`
-	Log      log.Logger `toml:"log"`
+	FilePath     FilePath            `toml:"filepath"`
+	Log          log.Logger          `toml:"log"`
+	RouterDegree int                 `toml:"routerDegree"`
+	DnsCacheConf system.DnsCacheConf `toml:"dnsCache"`
+	Store        store.StoreConf     `toml:"store"`
+	HttpConf     service.HttpConf    `toml:"httpConf"`
 }
 
 // load my config file
