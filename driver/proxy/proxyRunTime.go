@@ -14,19 +14,22 @@ import (
 type proxyRuntime struct {
 	router   *router.RootItem
 	dnsCache *system.DnsCacheHandle
-	Store    store.Store
 	Conf     *config.Config
 
 	FastHttpServer *fasthttp.Server
+
+	//Clusters map[uint32]*service.Cluster
+	dispatcher *service.Dispatcher
 
 	isStopped int32
 }
 
 func NewProxy(c *config.Config) *proxyRuntime {
-	p := &proxyRuntime{
-		router:   router.NewRouterList(c.RouterDegree),
-		dnsCache: system.New(c.DnsCacheConf),
-		Conf:     c,
+	var p = &proxyRuntime{
+		router:     router.NewRouterList(c.RouterDegree),
+		dnsCache:   system.New(c.DnsCacheConf),
+		Conf:       c,
+		dispatcher: service.NewDispatcher(),
 	}
 
 	if d := p.initStore().load().NewHttpServer(); d == nil {
@@ -43,12 +46,12 @@ func (p *proxyRuntime) initStore() *proxyRuntime {
 		log.Errorf("init store err %s", err)
 	}
 
-	p.Store = s
+	p.dispatcher.Store = s
 	return p
 }
 
 func (p *proxyRuntime) load() *proxyRuntime {
-	p.loadCluster()
+	p.dispatcher.Load()
 
 	return p
 }
@@ -74,20 +77,4 @@ func (p *proxyRuntime) HttpServerHandle(ctx *fasthttp.RequestCtx) {
 		return
 	}
 	log.Debug(string(ctx.Request.RequestURI()))
-}
-
-func (p *proxyRuntime) loadCluster() {
-	log.Debug("load clustering .....")
-
-	data, err := p.Store.Get(1, func() interface{} {
-		cluster := &service.Cluster{}
-		return cluster
-	})
-
-	if err != nil {
-		log.Error(err)
-	}
-
-	log.Info(data.(*service.Cluster).Name)
-	log.Info(int64(32))
 }

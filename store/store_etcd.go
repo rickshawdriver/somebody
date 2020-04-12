@@ -5,11 +5,14 @@ import (
 	"encoding/json"
 	"fmt"
 	"github.com/coreos/etcd/clientv3"
+	"math"
 	"time"
 )
 
 const (
 	DEFAULTTIMEOUT = 3 * time.Second
+
+	endID = uint32(math.MaxUint32)
 )
 
 type EtcdStore struct {
@@ -18,6 +21,10 @@ type EtcdStore struct {
 	namespace string
 
 	clusterDir string
+}
+
+type Pb interface {
+	GetID() uint32
 }
 
 func getEtcdStoreFrom(addr []string, nameSpace string, auth BasicAuth) (Store, error) {
@@ -90,4 +97,39 @@ func (e *EtcdStore) Get(id uint32, f func() interface{}) (interface{}, error) {
 	}
 
 	return value, nil
+}
+
+func (e *EtcdStore) Gets(page int64, types func() Pb, fn func(value interface{}) error) error {
+	start := uint32(0)
+	end := getKey(e.namespace, endID)
+	withRange := clientv3.WithRange(end)
+	withLimit := clientv3.WithLimit(page)
+
+	for {
+		resp, err := e.get(getKey(e.namespace, start), withRange, withLimit)
+		if err != nil {
+			return err
+		}
+
+		for _, item := range resp.Kvs {
+			value := types()
+			if err = json.Unmarshal(item.Value, value); err != nil {
+				return err
+			}
+
+			err = fn(value)
+			if err != nil {
+				return err
+			}
+
+			start = value.GetID() + 1
+		}
+
+		// read complete
+		if len(resp.Kvs) < int(page) {
+			break
+		}
+	}
+
+	return nil
 }

@@ -22,7 +22,9 @@ type Store interface {
 	Raw() interface{}
 
 	Put(id uint32, f func() interface{}) error
+
 	Get(id uint32, f func() interface{}) (interface{}, error)
+	Gets(limit int64, types func() Pb, fn func(value interface{}) error) error
 }
 
 func init() {

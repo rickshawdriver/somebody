@@ -5,3 +5,13 @@ type Cluster struct {
 	Name string `json:"name"`
 	Desc string `json:"desc"`
 }
+
+func (d *Dispatcher) AddCluster(cluster *Cluster) error {
+	d.Clusters[cluster.ID] = cluster
+
+	return nil
+}
+
+func (c *Cluster) GetID() uint32 {
+	return c.ID
+}
