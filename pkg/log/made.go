@@ -1,6 +1,7 @@
 package log
 
 import (
+	"os"
 	"runtime/debug"
 )
 
@@ -30,10 +31,12 @@ func Warnf(format string, args ...interface{}) {
 
 func Error(args ...interface{}) {
 	mainLogger.Error(args...)
+	os.Exit(1)
 }
 
 func Errorf(format string, args ...interface{}) {
 	mainLogger.Errorf(format, args...)
+	os.Exit(1)
 }
 
 func Panic(args ...interface{}) {
