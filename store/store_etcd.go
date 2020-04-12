@@ -47,6 +47,6 @@ func setEtcdAuth(config *clientv3.Config, auth BasicAuth) {
 	}
 }
 
-func (etcdStore *EtcdStore) Ping() error {
-	return nil
+func (etcdStore *EtcdStore) Raw() interface{} {
+	return etcdStore.etcdRaw
 }

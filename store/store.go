@@ -19,7 +19,7 @@ type StoreConf struct {
 }
 
 type Store interface {
-	Ping() error
+	Raw() interface{}
 }
 
 func init() {

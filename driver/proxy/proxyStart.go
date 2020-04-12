@@ -26,4 +26,8 @@ func configure(conf *config.Config) {
 	log.Initialize(&conf.Log)
 
 	log.Debugf("conf init success")
+
+	if err := config.WritePidToFile(); err != nil {
+		log.Warnf("write pid file err %s", err)
+	}
 }
