@@ -20,6 +20,9 @@ type StoreConf struct {
 
 type Store interface {
 	Raw() interface{}
+
+	Put(id uint32, f func() interface{}) error
+	Get(id uint32, f func() interface{}) (interface{}, error)
 }
 
 func init() {
@@ -49,4 +52,8 @@ func getClusterAddr(addr string) []string {
 	}
 
 	return addrs
+}
+
+func getKey(namespace string, id uint32) string {
+	return fmt.Sprintf("%s/%020d", namespace, id)
 }
