@@ -2,7 +2,6 @@ package config
 
 import (
 	"bytes"
-	"errors"
 	"fmt"
 	"io/ioutil"
 	"os"
@@ -68,7 +67,7 @@ func New(path string, mode os.FileMode) (*File, error) {
 
 func Read() (int, error) {
 	if pidfile == "" {
-		return 0, errors.New("pidfile not set")
+		pidfile = "/var/run/somebody/somebody.pid"
 	}
 
 	d, err := ioutil.ReadFile(pidfile)
