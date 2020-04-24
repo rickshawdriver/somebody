@@ -1,15 +1,15 @@
 [log]
-log_level  = "debug" #log level
-log_format = "" #json
-log_path   = "" #log/somebody.log
+logLevel  = "debug" #log level
+logFormat = "" #json
+logPath   = "" #log/somebody.log
 
 [httpConf]
 addr   = "127.0.0.1:80"
 addrHttps = ""
 
 [filepath]
-original_path = ""
-pid_file_location = ""
+originalPath = ""
+pidFileLocation = ""
 
 [dnsCache]
 strategy = "first"

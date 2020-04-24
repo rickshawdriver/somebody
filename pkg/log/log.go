@@ -9,9 +9,9 @@ import (
 )
 
 type Logger struct {
-	LogLevel  string `toml:"log_level"`
-	LogPath   string `toml:"log_path"`
-	LogFormat string `toml:"log_format"`
+	LogLevel  string `toml:"logLevel"`
+	LogPath   string `toml:"logPath"`
+	LogFormat string `toml:"logFormat"`
 }
 
 var (
