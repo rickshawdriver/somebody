@@ -18,7 +18,7 @@ checkInterval = 5
 
 [store]
 registryAddr = "etcd://127.0.0.1:2379"
-nameSpace    = "hordo"
+nameSpace    = "somebody"
 userName     = ""
 password     = ""
 

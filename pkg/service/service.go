@@ -1,9 +1,9 @@
 package service
 
 type Service struct {
-	ID     uint32 `json:"id"`
-	Addr   string `json:"addr"`
-	MaxQps uint32 `json:"maxQps"` // support max qps
+	ID       uint32 `json:"id"`
+	EndPoint string `json:"endpoint"`
+	MaxQps   uint32 `json:"maxQps"` // support max qps
 }
 
 func (d *Dispatcher) addService(service *Service) error {

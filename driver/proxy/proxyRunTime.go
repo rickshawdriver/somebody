@@ -46,6 +46,10 @@ func (p *proxyRuntime) initStore() *proxyRuntime {
 		log.Errorf("init store err %s", err)
 	}
 
+	if s == nil {
+		log.Errorf("init store fail")
+	}
+
 	p.dispatcher.Store = s
 	return p
 }
