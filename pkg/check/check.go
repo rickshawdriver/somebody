@@ -1,34 +1,38 @@
 package check
 
 import (
+	"github.com/rickshawdriver/somebody/pkg/log"
 	"github.com/rickshawdriver/somebody/pkg/safe"
 	"time"
 )
 
-type Check interface {
-	Run()
-}
-
-type CheckerContainer map[time.Duration][]Check
+type CheckerContainer map[time.Duration][]HttpChecker
 
 var (
 	Checkers CheckerContainer
-
-	SomebodyTimer []*time.Timer
 )
 
 func (cs CheckerContainer) RunCheck() {
-	SomebodyTimer = []*time.Timer{}
+	for _, item := range cs {
+		safe.Go(func() {
+			t := time.NewTicker(time.Second * 5)
+			defer t.Stop()
 
-	for k, _ := range cs {
-		SomebodyTimer = append(SomebodyTimer, time.NewTimer(time.Second*k))
+			for {
+				select {
+				case <-t.C:
+					for _, value := range item {
+						err := value.Run()
+						if err != nil {
+							log.Warnf("health check error %s", err)
+						}
+					}
+				}
+			}
+		})
 	}
 
-	safe.Go(func() {
+	for {
 
-	})
-}
-
-func action(cc []Check, interval uint32) {
-
+	}
 }
