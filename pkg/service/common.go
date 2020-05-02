@@ -8,8 +8,8 @@ import (
 type Status uint32
 
 const (
-	UP Status = iota
-	Down
+	Down Status = iota
+	UP
 
 	Page = int64(30)
 )
@@ -60,7 +60,7 @@ func (d *Dispatcher) loadServices() {
 		service := &Service{}
 		return service
 	}, func(value interface{}) error {
-		if err := d.addService(value.(*Service)); err != nil {
+		if err := d.AddService(value.(*Service)); err != nil {
 			return err
 		}
 		return nil
@@ -69,4 +69,6 @@ func (d *Dispatcher) loadServices() {
 	if err != nil {
 		log.Error(err)
 	}
+
+	d.HealthCheckRun()
 }
