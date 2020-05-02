@@ -3,7 +3,6 @@ package proxy
 import (
 	"github.com/rickshawdriver/somebody/pkg/config"
 	"github.com/rickshawdriver/somebody/pkg/log"
-	"github.com/spf13/cobra"
 	"net/http"
 )
 
@@ -11,7 +10,7 @@ var (
 	conf = &config.Config{}
 )
 
-func Start(cmd *cobra.Command, args []string) {
+func Start() {
 	configure(conf)
 	http.DefaultTransport.(*http.Transport).Proxy = http.ProxyFromEnvironment
 

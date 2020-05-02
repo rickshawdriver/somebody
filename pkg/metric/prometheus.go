@@ -6,6 +6,7 @@ import (
 	"github.com/prometheus/client_golang/prometheus"
 	"github.com/prometheus/common/expfmt"
 	"github.com/rickshawdriver/somebody/pkg/log"
+	"github.com/rickshawdriver/somebody/pkg/safe"
 	"net/http"
 	"time"
 )
@@ -94,18 +95,11 @@ func (p *Prometheus) Report() error {
 	}
 
 	pushUrl := fmt.Sprintf("service://%s/metrics/job/%s", p.addr, p.job)
-	req, err := http.NewRequest(METHOD, pushUrl, buf)
-	if err != nil {
-		return err
-	}
-	req.Header.Set("Content-Type", string(expfmt.FmtProtoDelim))
-	resp, err := p.requestClient.Do(req)
-	log.Info(resp.StatusCode)
-	if err != nil {
+	resp, err := safe.Request(METHOD, pushUrl, buf)
+	if err != nil || resp.StatusCode != 200 {
 		return err
 	}
 
-	defer resp.Body.Close()
 	return nil
 }
 

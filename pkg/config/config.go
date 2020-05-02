@@ -18,8 +18,8 @@ var (
 )
 
 type FilePath struct {
-	OriginalPath    string `toml:"original_path"`
-	PidFileLocation string `toml:"pid_file_location"`
+	OriginalPath    string `toml:"originalPath"`
+	PidFileLocation string `toml:"pidFileLocation"`
 }
 
 type Config struct {

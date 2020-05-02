@@ -12,7 +12,7 @@ func NewServerStartCmd() *cobra.Command {
 		Short: "start proxy",
 		Long:  "start Gateway",
 		Run: func(cmd *cobra.Command, args []string) {
-			proxy.Start(cmd, args)
+			proxy.Start()
 		},
 	}
 

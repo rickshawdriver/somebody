@@ -6,7 +6,7 @@ type Cluster struct {
 	Desc string `json:"desc"`
 }
 
-func (d *Dispatcher) AddCluster(cluster *Cluster) error {
+func (d *Dispatcher) addCluster(cluster *Cluster) error {
 	d.Clusters[cluster.ID] = cluster
 
 	return nil
