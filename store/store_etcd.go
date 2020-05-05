@@ -82,11 +82,11 @@ func (e *EtcdStore) Put(id uint32, f func() interface{}) error {
 		return err
 	}
 
-	return e.put(getKey(e.namespace, id), string(j))
+	return e.put(getKey(e.namespace, id, f()), string(j))
 }
 
 func (e *EtcdStore) Get(id uint32, f func() interface{}) (interface{}, error) {
-	resp, err := e.get(getKey(e.namespace, id), clientv3.WithPrefix())
+	resp, err := e.get(getKey(e.namespace, id, f()), clientv3.WithPrefix())
 	if err != nil {
 		return nil, err
 	}
@@ -101,12 +101,12 @@ func (e *EtcdStore) Get(id uint32, f func() interface{}) (interface{}, error) {
 
 func (e *EtcdStore) Gets(page int64, types func() Pb, fn func(value interface{}) error) error {
 	start := uint32(0)
-	end := getKey(e.namespace, endID)
+	end := getKey(e.namespace, endID, types())
 	withRange := clientv3.WithRange(end)
 	withLimit := clientv3.WithLimit(page)
 
 	for {
-		resp, err := e.get(getKey(e.namespace, start), withRange, withLimit)
+		resp, err := e.get(getKey(e.namespace, start, types()), withRange, withLimit)
 		if err != nil {
 			return err
 		}

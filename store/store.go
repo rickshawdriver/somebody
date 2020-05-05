@@ -3,6 +3,7 @@ package store
 import (
 	"fmt"
 	"net/url"
+	"reflect"
 	"strings"
 )
 
@@ -56,6 +57,8 @@ func getClusterAddr(addr string) []string {
 	return addrs
 }
 
-func getKey(namespace string, id uint32) string {
-	return fmt.Sprintf("%s/%020d", namespace, id)
+func getKey(namespace string, id uint32, keyType interface{}) string {
+	typeKey := reflect.TypeOf(keyType).String()
+	key := strings.Split(typeKey, ".")
+	return fmt.Sprintf("%s/%s/%020d", namespace, key[len(key)-1], id)
 }
