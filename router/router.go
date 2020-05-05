@@ -23,7 +23,7 @@ type Node struct {
 
 type Item struct {
 	url []byte
-	api uint
+	api uint32
 }
 
 func NewRouterList(d int) *RootItem {
@@ -34,7 +34,7 @@ func byteCompare(a, b []byte) int {
 	return bytes.Compare(a, b)
 }
 
-func (router *RootItem) Put(data []byte, api uint) {
+func (router *RootItem) Put(data []byte, api uint32) {
 	item := &Item{data, api}
 
 	if router.Root == nil {

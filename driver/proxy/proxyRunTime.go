@@ -6,13 +6,11 @@ import (
 	"github.com/rickshawdriver/somebody/pkg/safe"
 	"github.com/rickshawdriver/somebody/pkg/service"
 	"github.com/rickshawdriver/somebody/pkg/system"
-	"github.com/rickshawdriver/somebody/router"
 	"github.com/rickshawdriver/somebody/store"
 	"github.com/valyala/fasthttp"
 )
 
 type proxyRuntime struct {
-	router   *router.RootItem
 	dnsCache *system.DnsCacheHandle
 	Conf     *config.Config
 
@@ -26,7 +24,6 @@ type proxyRuntime struct {
 
 func NewProxy(c *config.Config) *proxyRuntime {
 	var p = &proxyRuntime{
-		router:     router.NewRouterList(c.RouterDegree),
 		dnsCache:   system.New(c.DnsCacheConf),
 		Conf:       c,
 		dispatcher: service.NewDispatcher(),
@@ -66,6 +63,7 @@ func (p *proxyRuntime) NewHttpServer() *proxyRuntime {
 	}
 
 	safe.Go(func() {
+		log.Info("listen server ing.....")
 		if err := p.FastHttpServer.ListenAndServe(p.Conf.HttpConf.Addr); err != nil {
 			log.Errorf("listen fastHttp err %s", err)
 		}
@@ -80,5 +78,15 @@ func (p *proxyRuntime) HttpServerHandle(ctx *fasthttp.RequestCtx) {
 		ctx.SetStatusCode(fasthttp.StatusServiceUnavailable)
 		return
 	}
-	log.Debug(string(ctx.Request.RequestURI()))
+	log.Debug(ctx.Request.RequestURI())
+
+	//startAt := time.Now()
+	id, found := p.dispatcher.Router.Get(ctx.Request.RequestURI())
+	if !found {
+		ctx.SetStatusCode(fasthttp.StatusNotFound)
+		return
+	}
+
+	api := p.dispatcher.Apis[id.(uint32)]
+	log.Info(api)
 }
