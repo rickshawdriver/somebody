@@ -29,6 +29,7 @@ func NewProxy(c *config.Config) *proxyRuntime {
 		dispatcher: service.NewDispatcher(),
 	}
 
+	// load store and start http server
 	if d := p.initStore().load().NewHttpServer(); d == nil {
 		log.Error("init proxy error")
 	}
@@ -36,6 +37,7 @@ func NewProxy(c *config.Config) *proxyRuntime {
 	return p
 }
 
+// init store
 func (p *proxyRuntime) initStore() *proxyRuntime {
 	s, err := store.GetStoreFrom(p.Conf.Store)
 
@@ -51,12 +53,14 @@ func (p *proxyRuntime) initStore() *proxyRuntime {
 	return p
 }
 
+// load store data
 func (p *proxyRuntime) load() *proxyRuntime {
 	p.dispatcher.Load()
 
 	return p
 }
 
+// start fast http
 func (p *proxyRuntime) NewHttpServer() *proxyRuntime {
 	p.FastHttpServer = &fasthttp.Server{
 		Handler: p.HttpServerHandle,
@@ -72,6 +76,7 @@ func (p *proxyRuntime) NewHttpServer() *proxyRuntime {
 	return p
 }
 
+// fast http handle
 func (p *proxyRuntime) HttpServerHandle(ctx *fasthttp.RequestCtx) {
 	if p.IsStop() {
 		log.Warn("fastHttp already stop")

@@ -11,8 +11,8 @@ var (
 )
 
 func Start() {
-	configure(conf)
-	http.DefaultTransport.(*http.Transport).Proxy = http.ProxyFromEnvironment
+	configure(conf)                                                           // configure config
+	http.DefaultTransport.(*http.Transport).Proxy = http.ProxyFromEnvironment // http agent
 
 	p := NewProxy(conf)
 	p.SetupSignal()
